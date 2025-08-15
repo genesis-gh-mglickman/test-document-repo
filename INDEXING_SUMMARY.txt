@@ -1,0 +1,50 @@
+Indexing Summary for test-document-repo
+
+High-level summary
+- Managed the todo lifecycle (IN_PROGRESS → AWAITING_INPUT → IN_PROGRESS → COMPLETED).
+- Created a project-scoped document index: proj_Eve_CbpOeu.
+- Initially blocked by 403 on web access; prepared a no-auth ZIP fallback.
+- After git tools were fixed, cloned the repo directly into bot_git.
+- Indexed the discovered PDF into the document index and verified it.
+
+Step-by-step details
+1) Initialization and setup
+- Set todo status to IN_PROGRESS and logged start.
+- Retrieved todo details to determine project_id for index naming (proj_Eve_CbpOeu).
+- Checked existing document indices; created a new index: proj_Eve_CbpOeu.
+
+2) Initial access attempt and fallback prep
+- Tried web access to GitHub endpoints; received 403 Unauthorized (environment-level).
+- Prepared a No-auth path:
+  - Created staging folder at bot_git/external_sources/test-document-repo.
+  - Registered it as a project asset for traceability.
+- Set status to AWAITING_INPUT while waiting for archive/link or fixed tools.
+
+3) Repo access after tools were fixed
+- Resumed work (status back to IN_PROGRESS).
+- Used git_action to clone directly:
+  - clone_remote https://github.com/genesis-gh-mglickman/test-document-repo.git → cloned into bot_git/test-document-repo
+  - list_files confirmed file: test-document-repo/bny-bookkeeping-activity.pdf
+
+4) Ingestion into the document index
+- Attempted directory-level ingestion:
+  - document_index ADD_DOCUMENTS with BOT_GIT:test-document-repo → “File not readable” (directory-level add not supported here)
+- Ingested the specific file:
+  - document_index ADD_DOCUMENTS with BOT_GIT:test-document-repo/bny-bookkeeping-activity.pdf → Success
+- Verified ingestion:
+  - document_index LIST_DOCUMENTS (show_files_only=True) → 1 document present with extracted text.
+
+5) Closeout
+- Logged all actions and results.
+- Set todo status to COMPLETED.
+
+Artifacts and references
+- Repo path (bot_git): test-document-repo/
+- Indexed document: BOT_GIT:test-document-repo/bny-bookkeeping-activity.pdf
+- Index name: proj_Eve_CbpOeu
+- Staging asset (for no-auth fallback): external_sources/test-document-repo/README.md
+
+Next steps (optional)
+- Set up periodic sync-and-index to ingest new files.
+- Parse the PDF into a structured reference (fields, positions, formats) and export a table.
+- Re-run ingestion for any additional files added to the repo.
